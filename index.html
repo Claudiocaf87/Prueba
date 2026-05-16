@@ -1854,10 +1854,10 @@
 
         <div class="ba-slider" id="baSliderBox2">
           <div class="ba-slider__after-wrap">
-            <img class="ba-slider__img" src="assets/deep-plane-despues.webp" loading="lazy" decoding="async" alt="Después del Deep Plane Facelift" />
+            <img class="ba-slider__img" src="assets/deep-plane-despues.webp" loading="eager" decoding="async" alt="Después del Deep Plane Facelift" />
           </div>
           <div class="ba-slider__before-wrap" id="baBeforeWrap2">
-            <img class="ba-slider__img" src="assets/deep-plane-antes.webp" loading="lazy" decoding="async" alt="Antes del Deep Plane Facelift" />
+            <img class="ba-slider__img" src="assets/deep-plane-antes.webp" loading="eager" decoding="async" alt="Antes del Deep Plane Facelift" />
             <svg class="ba-slider__geom" viewBox="0 0 100 150" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
               <path d="M 30 60 Q 50 80 70 60"/>
               <path d="M 28 80 Q 50 100 72 80"/>
@@ -1898,10 +1898,10 @@
 
         <div class="ba-slider" id="baSliderBox3">
           <div class="ba-slider__after-wrap">
-            <img class="ba-slider__img" src="assets/esculpido-despues.webp" loading="lazy" decoding="async" alt="Después del Esculpido Corporal HD" />
+            <img class="ba-slider__img" src="assets/esculpido-despues.webp" loading="eager" decoding="async" alt="Después del Esculpido Corporal HD" />
           </div>
           <div class="ba-slider__before-wrap" id="baBeforeWrap3">
-            <img class="ba-slider__img" src="assets/esculpido-antes.webp" loading="lazy" decoding="async" alt="Antes del Esculpido Corporal HD" />
+            <img class="ba-slider__img" src="assets/esculpido-antes.webp" loading="eager" decoding="async" alt="Antes del Esculpido Corporal HD" />
             <svg class="ba-slider__geom" viewBox="0 0 100 150" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
               <line x1="30" y1="30" x2="30" y2="130"/>
               <line x1="70" y1="30" x2="70" y2="130"/>
@@ -2107,34 +2107,6 @@
 </main>
 
 <script>
-/* =========================================================
-   LAZY LOAD — imágenes de sliders antes/después
-   Carga cada imagen solo cuando su sección entra en viewport
-   ========================================================= */
-(function(){
-  const lazyImgs = document.querySelectorAll('img[loading="lazy"]');
-  if ('IntersectionObserver' in window) {
-    const imgObs = new IntersectionObserver((entries) => {
-      entries.forEach(en => {
-        if (en.isIntersecting) {
-          const img = en.target;
-          if (img.dataset.src) {
-            img.src = img.dataset.src;
-            img.removeAttribute('data-src');
-          }
-          img.style.opacity = '0';
-          img.onload = () => {
-            img.style.transition = 'opacity 400ms ease';
-            img.style.opacity = '1';
-          };
-          imgObs.unobserve(img);
-        }
-      });
-    }, { rootMargin: '200px 0px' });
-    lazyImgs.forEach(img => imgObs.observe(img));
-  }
-})();
-
 /* =========================================================
    NAV
    ========================================================= */
