@@ -8,7 +8,8 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&family=Playfair+Display:ital,wght@0,300;0,400;0,500;1,300;1,400&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&family=Playfair+Display:ital,wght@0,300;0,400;0,500;1,300;1,400&display=swap" rel="stylesheet" media="print" onload="this.media='all'" />
+<noscript><link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&family=Playfair+Display:ital,wght@0,300;0,400;0,500;1,300;1,400&display=swap" rel="stylesheet" /></noscript>
 
 <style>
   /* ============================================
@@ -196,14 +197,23 @@
       inset: 64px 0 auto 0;
       flex-direction: column;
       gap: 28px;
-      background: rgba(8,8,8,0.96);
-      backdrop-filter: blur(18px);
+      background: rgba(8,8,8,0.98);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
       padding: 40px var(--pad-page) 50px;
       border-bottom: 1px solid var(--border-faint);
       transform: translateY(-110%);
       transition: transform var(--t-slow) var(--ease);
+      z-index: 79;
+      pointer-events: none;
+      visibility: hidden;
     }
-    .nav.open .nav__links { transform: translateY(0); }
+    .nav.open .nav__links {
+      transform: translateY(0);
+      pointer-events: auto;
+      visibility: visible;
+    }
+    .nav { z-index: 80; }
   }
 
   /* ============================================
@@ -236,11 +246,21 @@
     z-index: 0;
     overflow: hidden;
     background: #050505;
-    transition: opacity 600ms ease;
+    opacity: 1;
+    transition: opacity 600ms var(--ease);
   }
-  .hero__video.hidden {
-    opacity: 0;
-    pointer-events: none;
+  .hero__video.hidden { opacity: 0; }
+  /* Mobile: lighter overlay, brighter video */
+  @media (max-width: 768px) {
+    .hero__video video {
+      filter: saturate(1.1) contrast(1.12) brightness(1.15);
+      object-position: center center;
+    }
+    .hero__video::after {
+      background:
+        radial-gradient(95% 70% at 50% 50%, rgba(0,0,0,0.03) 0%, rgba(0,0,0,0.12) 60%, rgba(0,0,0,0.30) 100%),
+        linear-gradient(180deg, rgba(8,8,8,0.10) 0%, rgba(8,8,8,0.04) 40%, rgba(8,8,8,0.32) 100%);
+    }
   }
   .hero__video video {
     position: absolute;
@@ -250,19 +270,6 @@
     object-fit: cover;
     filter: saturate(1.05) contrast(1.05) brightness(1.05);
     transform: scale(1.04);
-  }
-  @media (max-width: 768px) {
-    .hero__video video {
-      filter: saturate(1.1) contrast(1.12) brightness(1.15);
-      object-position: center center;
-    }
-    /* Reduce the dark overlay on mobile so details are visible */
-    .hero__video::after {
-      background:
-        radial-gradient(95% 70% at 50% 50%, rgba(0,0,0,0.02) 0%, rgba(0,0,0,0.12) 60%, rgba(0,0,0,0.38) 100%),
-        linear-gradient(180deg, rgba(8,8,8,0.10) 0%, rgba(8,8,8,0.02) 40%, rgba(8,8,8,0.40) 100%);
-    }
-  }
     transition: transform 1200ms var(--ease);
   }
   .hero__video::after {
@@ -312,41 +319,6 @@
   .hero__corners::before { top: -1px; right: -1px; border-left: 0; border-bottom: 0; }
   .hero__corners::after  { bottom: -1px; left: -1px; border-right: 0; border-top: 0; }
 
-  .hero__meta {
-    position: absolute;
-    top: 100px;
-    left: var(--pad-page);
-    font-family: ui-monospace, "SF Mono", Menlo, monospace;
-    font-size: 10px;
-    letter-spacing: 0.22em;
-    color: rgba(197,168,128,0.55);
-    text-transform: uppercase;
-    z-index: 3;
-    pointer-events: none;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-  .hero__meta i {
-    display: inline-block;
-    width: 6px; height: 6px;
-    background: var(--gold);
-    border-radius: 50%;
-    animation: pulse 1.6s ease-in-out infinite;
-    font-style: normal;
-  }
-  @keyframes pulse {
-    0%, 100% { opacity: 0.4; transform: scale(1); }
-    50%      { opacity: 1;   transform: scale(1.15); }
-  }
-  .hero__meta--right {
-    left: auto;
-    right: var(--pad-page);
-  }
-  @media (max-width: 768px) {
-    .hero__meta--right { display: none; }
-  }
-
   .hero__inner {
     position: relative;
     z-index: 2;
@@ -360,20 +332,33 @@
   }
   .hero__eyebrow { margin-bottom: 36px; }
   .hero__title {
-    font-size: clamp(28px, 6.2vw, 88px);
+    font-size: clamp(28px, 6vw, 88px);
     font-weight: 300;
     letter-spacing: -0.012em;
     max-width: 18ch;
     margin: 0 auto;
     text-wrap: balance;
-    word-break: break-word;
+    word-break: normal;
     overflow-wrap: break-word;
+    hyphens: manual;
   }
   @media (max-width: 480px) {
     .hero__title {
-      font-size: clamp(24px, 8.5vw, 38px);
-      letter-spacing: -0.008em;
+      font-size: clamp(22px, 7.5vw, 32px);
       max-width: 100%;
+      padding: 0 4px;
+      letter-spacing: -0.005em;
+    }
+    .hero__title .word {
+      white-space: normal;
+      overflow: visible;
+    }
+    .hero__title .word__inner {
+      white-space: normal;
+    }
+    .hero__title .line {
+      overflow: visible;
+      white-space: normal;
     }
   }
   .hero__title em {
@@ -490,9 +475,30 @@
     background: var(--bg-base);
   }
   .manifesto__inner {
-    max-width: 720px;
+    max-width: 860px;
     margin: 0 auto;
     text-align: center;
+    position: relative;
+    padding: clamp(48px, 6vw, 80px) clamp(32px, 5vw, 64px);
+    background: rgba(20, 18, 14, 0.40);
+    backdrop-filter: blur(22px) saturate(140%);
+    -webkit-backdrop-filter: blur(22px) saturate(140%);
+    border: 1px solid var(--border-subtle);
+    overflow: hidden;
+  }
+  .manifesto__inner::before {
+    content: "";
+    position: absolute;
+    inset: 14px;
+    border: 1px solid var(--border-faint);
+    pointer-events: none;
+  }
+  .manifesto__inner::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(60% 80% at 50% 0%, rgba(197,168,128,0.05) 0%, transparent 70%);
+    pointer-events: none;
   }
   .manifesto__quote {
     font-family: var(--serif);
@@ -715,7 +721,9 @@
   .booking__inner {
     max-width: 980px;
     margin: 0 auto;
-    background: var(--bg-elevated);
+    background: rgba(26, 26, 26, 0.55);
+    backdrop-filter: blur(18px) saturate(140%);
+    -webkit-backdrop-filter: blur(18px) saturate(140%);
     border: 1px solid var(--border-subtle);
     padding: clamp(36px, 5vw, 72px);
     position: relative;
@@ -1237,8 +1245,18 @@
   }
 
   /* ============================================
-     SCROLL REVEAL
+     PERFORMANCE — content-visibility para
+     secciones below-the-fold
      ============================================ */
+  .procedures,
+  .booking,
+  .testimonials,
+  .clinicas,
+  .marquee,
+  .stats {
+    content-visibility: auto;
+    contain-intrinsic-size: 0 600px;
+  }
   .reveal {
     opacity: 0;
     transform: translateY(20px);
@@ -1354,44 +1372,8 @@
   }
 
   /* ============================================
-     SCROLL PROGRESS BAR (right edge, gold)
+     SCROLL PROGRESS — removed
      ============================================ */
-  .scroll-progress {
-    position: fixed;
-    top: 0; right: 0;
-    width: 1px;
-    height: 100vh;
-    background: rgba(197,168,128,0.08);
-    z-index: 90;
-    pointer-events: none;
-  }
-  .scroll-progress__bar {
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 0%;
-    background: linear-gradient(180deg, var(--gold) 0%, rgba(197,168,128,0.4) 100%);
-    transition: height 100ms linear;
-  }
-  .scroll-progress__label {
-    position: fixed;
-    top: 50%;
-    right: 14px;
-    transform: translateY(-50%) rotate(90deg);
-    transform-origin: right center;
-    font-family: ui-monospace, "SF Mono", Menlo, monospace;
-    font-size: 9px;
-    letter-spacing: 0.32em;
-    color: var(--text-secondary);
-    text-transform: uppercase;
-    z-index: 90;
-    pointer-events: none;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    white-space: nowrap;
-  }
-  .scroll-progress__label span { color: var(--gold); }
-  @media (max-width: 900px) { .scroll-progress__label { display: none; } }
 
   /* ============================================
      MARQUEE — Playfair italic, subtle scrolling
@@ -1493,6 +1475,7 @@
     cursor: ew-resize;
     user-select: none;
     background: #0a0908;
+    touch-action: pan-y;
   }
   .ba-slider__img {
     position: absolute;
@@ -1679,8 +1662,6 @@
 <div class="cursor" id="cursor" aria-hidden="true"></div>
 <div class="cursor-trail" id="cursorTrail" aria-hidden="true"></div>
 
-
-
 <!-- ====================== NAVBAR ====================== -->
 <nav class="nav" id="nav" role="navigation" aria-label="Principal">
   <a href="#top" class="nav__logo" aria-label="Rostova — Inicio">ROSTOVA</a>
@@ -1706,7 +1687,6 @@
     </div>
     <div class="hero__frame" aria-hidden="true"></div>
     <div class="hero__corners" aria-hidden="true"></div>
-
 
     <div class="hero__inner">
       <div class="eyebrow hero__eyebrow reveal" style="--reveal-delay: 0ms;">
@@ -1825,11 +1805,11 @@
         <div class="ba-slider" id="baSliderBox">
           <!-- DESPÚES (behind) -->
           <div class="ba-slider__after-wrap">
-            <img class="ba-slider__img" src="assets/rino-despues.webp" alt="Resultado posterior — perfil nasal refinado" loading="lazy" />
+            <img class="ba-slider__img" src="assets/rino-despues.webp" loading="eager" decoding="async" alt="Resultado posterior — perfil nasal refinado" />
           </div>
           <!-- ANTES (in front, clipped from the right) -->
           <div class="ba-slider__before-wrap" id="baBeforeWrap">
-            <img class="ba-slider__img" src="assets/rino-antes.webp" alt="Antes de la rinomodelación" loading="lazy" />
+            <img class="ba-slider__img" src="assets/rino-antes.webp" loading="eager" decoding="async" alt="Antes de la rinomodelación" />
             <!-- Architectural measurement overlay drawn on the antes side -->
             <svg class="ba-slider__geom" viewBox="0 0 100 150" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
               <line x1="50" y1="10" x2="50" y2="140"/>
@@ -1866,20 +1846,18 @@
       </div>
     </article>
 
-    <!-- 02 · DEEP PLANE FACELIFT — reversed -->
+    <!-- 02 · DEEP PLANE FACELIFT — Before/After slider, reversed -->
     <article class="procedure procedure--reverse reveal">
-      <div class="procedure__media has-photo" id="baSlider2">
+      <div class="procedure__media has-photo">
         <span class="procedure__media-tag">PROC · 02</span>
         <span class="procedure__index">ii.</span>
 
         <div class="ba-slider" id="baSliderBox2">
-          <!-- DESPUÉS (behind) -->
           <div class="ba-slider__after-wrap">
-            <img class="ba-slider__img" src="assets/deep-plane-despues.webp" alt="Resultado Deep Plane Facelift" loading="lazy" />
+            <img class="ba-slider__img" src="assets/deep-plane-despues.webp" loading="lazy" decoding="async" alt="Después del Deep Plane Facelift" />
           </div>
-          <!-- ANTES (in front, clipped) -->
           <div class="ba-slider__before-wrap" id="baBeforeWrap2">
-            <img class="ba-slider__img" src="assets/deep-plane-antes.webp" alt="Antes del Deep Plane Facelift" loading="lazy" />
+            <img class="ba-slider__img" src="assets/deep-plane-antes.webp" loading="lazy" decoding="async" alt="Antes del Deep Plane Facelift" />
             <svg class="ba-slider__geom" viewBox="0 0 100 150" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
               <path d="M 30 60 Q 50 80 70 60"/>
               <path d="M 28 80 Q 50 100 72 80"/>
@@ -1912,20 +1890,18 @@
       </div>
     </article>
 
-    <!-- 03 · ESCULPIDO CORPORAL HD -->
+    <!-- 03 · ESCULPIDO CORPORAL HD — Before/After slider -->
     <article class="procedure reveal">
-      <div class="procedure__media has-photo" id="baSlider3">
+      <div class="procedure__media has-photo">
         <span class="procedure__media-tag">PROC · 03</span>
         <span class="procedure__index">iii.</span>
 
         <div class="ba-slider" id="baSliderBox3">
-          <!-- DESPUÉS (behind) -->
           <div class="ba-slider__after-wrap">
-            <img class="ba-slider__img" src="assets/esculpido-despues.webp" alt="Resultado Esculpido Corporal HD" loading="lazy" />
+            <img class="ba-slider__img" src="assets/esculpido-despues.webp" loading="lazy" decoding="async" alt="Después del Esculpido Corporal HD" />
           </div>
-          <!-- ANTES (in front, clipped) -->
           <div class="ba-slider__before-wrap" id="baBeforeWrap3">
-            <img class="ba-slider__img" src="assets/esculpido-antes.webp" alt="Antes del Esculpido Corporal HD" loading="lazy" />
+            <img class="ba-slider__img" src="assets/esculpido-antes.webp" loading="lazy" decoding="async" alt="Antes del Esculpido Corporal HD" />
             <svg class="ba-slider__geom" viewBox="0 0 100 150" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
               <line x1="30" y1="30" x2="30" y2="130"/>
               <line x1="70" y1="30" x2="70" y2="130"/>
@@ -2131,6 +2107,34 @@
 </main>
 
 <script>
+/* =========================================================
+   LAZY LOAD — imágenes de sliders antes/después
+   Carga cada imagen solo cuando su sección entra en viewport
+   ========================================================= */
+(function(){
+  const lazyImgs = document.querySelectorAll('img[loading="lazy"]');
+  if ('IntersectionObserver' in window) {
+    const imgObs = new IntersectionObserver((entries) => {
+      entries.forEach(en => {
+        if (en.isIntersecting) {
+          const img = en.target;
+          if (img.dataset.src) {
+            img.src = img.dataset.src;
+            img.removeAttribute('data-src');
+          }
+          img.style.opacity = '0';
+          img.onload = () => {
+            img.style.transition = 'opacity 400ms ease';
+            img.style.opacity = '1';
+          };
+          imgObs.unobserve(img);
+        }
+      });
+    }, { rootMargin: '200px 0px' });
+    lazyImgs.forEach(img => imgObs.observe(img));
+  }
+})();
+
 /* =========================================================
    NAV
    ========================================================= */
@@ -2436,135 +2440,6 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
    ========================================================= */
 
 /* =========================================================
-   BEFORE / AFTER SLIDER — Deep Plane Facelift
-   ========================================================= */
-(function(){
-  const box    = document.getElementById('baSliderBox2');
-  if (!box) return;
-  const before = document.getElementById('baBeforeWrap2');
-  const handle = document.getElementById('baHandle2');
-  const grip   = handle.querySelector('.ba-slider__grip');
-  let pos = 50, dragging = false;
-  function apply(p) {
-    pos = Math.max(0, Math.min(100, p));
-    before.style.clipPath = `inset(0 ${100 - pos}% 0 0)`;
-    handle.style.left = pos + '%';
-    grip.setAttribute('aria-valuenow', String(Math.round(pos)));
-  }
-  function pctFromEvent(clientX) {
-    const r = box.getBoundingClientRect();
-    return ((clientX - r.left) / r.width) * 100;
-  }
-  function start(e) { dragging = true; box.classList.add('dragging'); move(e); }
-  function move(e)  { if (!dragging) return; const x = e.touches ? e.touches[0].clientX : e.clientX; apply(pctFromEvent(x)); if (e.cancelable) e.preventDefault(); }
-  function end()    { dragging = false; box.classList.remove('dragging'); }
-  box.addEventListener('mousedown', (e) => { apply(pctFromEvent(e.clientX)); start(e); });
-  window.addEventListener('mousemove', move);
-  window.addEventListener('mouseup', end);
-  box.addEventListener('touchstart', (e) => { apply(pctFromEvent(e.touches[0].clientX)); start(e); }, { passive: false });
-  window.addEventListener('touchmove', move, { passive: false });
-  window.addEventListener('touchend', end);
-  grip.addEventListener('keydown', (e) => {
-    const step = e.shiftKey ? 10 : 2;
-    if (e.key === 'ArrowLeft')  { apply(pos - step); e.preventDefault(); }
-    if (e.key === 'ArrowRight') { apply(pos + step); e.preventDefault(); }
-  });
-  let nudged = false;
-  const nudgeObs = new IntersectionObserver((entries) => {
-    entries.forEach(en => {
-      if (en.isIntersecting && !nudged) {
-        nudged = true;
-        setTimeout(() => {
-          const start2 = performance.now(), dur = 2200;
-          function loop(now) {
-            const k = Math.min(1, (now - start2) / dur);
-            const e1 = 0.5 - 0.5 * Math.cos(k * Math.PI * 2);
-            apply(50 + (e1 - 0.5) * 24);
-            if (k < 1 && !dragging) requestAnimationFrame(loop);
-            else if (!dragging) apply(50);
-          }
-          requestAnimationFrame(loop);
-        }, 600);
-      }
-    });
-  }, { threshold: 0.5 });
-  nudgeObs.observe(box);
-  apply(50);
-})();
-
-/* =========================================================
-   BEFORE / AFTER SLIDER — Esculpido Corporal HD
-   ========================================================= */
-(function(){
-  const box    = document.getElementById('baSliderBox3');
-  if (!box) return;
-  const before = document.getElementById('baBeforeWrap3');
-  const handle = document.getElementById('baHandle3');
-  const grip   = handle.querySelector('.ba-slider__grip');
-  let pos = 50, dragging = false;
-  function apply(p) {
-    pos = Math.max(0, Math.min(100, p));
-    before.style.clipPath = `inset(0 ${100 - pos}% 0 0)`;
-    handle.style.left = pos + '%';
-    grip.setAttribute('aria-valuenow', String(Math.round(pos)));
-  }
-  function pctFromEvent(clientX) {
-    const r = box.getBoundingClientRect();
-    return ((clientX - r.left) / r.width) * 100;
-  }
-  function start(e) { dragging = true; box.classList.add('dragging'); move(e); }
-  function move(e)  { if (!dragging) return; const x = e.touches ? e.touches[0].clientX : e.clientX; apply(pctFromEvent(x)); if (e.cancelable) e.preventDefault(); }
-  function end()    { dragging = false; box.classList.remove('dragging'); }
-  box.addEventListener('mousedown', (e) => { apply(pctFromEvent(e.clientX)); start(e); });
-  window.addEventListener('mousemove', move);
-  window.addEventListener('mouseup', end);
-  box.addEventListener('touchstart', (e) => { apply(pctFromEvent(e.touches[0].clientX)); start(e); }, { passive: false });
-  window.addEventListener('touchmove', move, { passive: false });
-  window.addEventListener('touchend', end);
-  grip.addEventListener('keydown', (e) => {
-    const step = e.shiftKey ? 10 : 2;
-    if (e.key === 'ArrowLeft')  { apply(pos - step); e.preventDefault(); }
-    if (e.key === 'ArrowRight') { apply(pos + step); e.preventDefault(); }
-  });
-  let nudged = false;
-  const nudgeObs = new IntersectionObserver((entries) => {
-    entries.forEach(en => {
-      if (en.isIntersecting && !nudged) {
-        nudged = true;
-        setTimeout(() => {
-          const start2 = performance.now(), dur = 2200;
-          function loop(now) {
-            const k = Math.min(1, (now - start2) / dur);
-            const e1 = 0.5 - 0.5 * Math.cos(k * Math.PI * 2);
-            apply(50 + (e1 - 0.5) * 24);
-            if (k < 1 && !dragging) requestAnimationFrame(loop);
-            else if (!dragging) apply(50);
-          }
-          requestAnimationFrame(loop);
-        }, 600);
-      }
-    });
-  }, { threshold: 0.5 });
-  nudgeObs.observe(box);
-  apply(50);
-})();
-(function(){
-  const heroVideo = document.querySelector('.hero__video');
-  const hero = document.querySelector('.hero');
-  if (!heroVideo || !hero) return;
-  function checkHeroVideo() {
-    const heroBottom = hero.getBoundingClientRect().bottom;
-    if (heroBottom < 0) {
-      heroVideo.classList.add('hidden');
-    } else {
-      heroVideo.classList.remove('hidden');
-    }
-  }
-  window.addEventListener('scroll', checkHeroVideo, { passive: true });
-  checkHeroVideo();
-})();
-
-/* =========================================================
    STATS COUNTER
    ========================================================= */
 (function(){
@@ -2598,98 +2473,164 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
 })();
 
 /* =========================================================
-   BEFORE / AFTER SLIDER  (Rinomodelación)
+   BEFORE / AFTER SLIDERS  (3 procedures)
+   Direction-aware touch: only intercepts horizontal gestures
+   so vertical scrolling stays native.
    ========================================================= */
 (function(){
-  const box     = document.getElementById('baSliderBox');
-  if (!box) return;
-  const before  = document.getElementById('baBeforeWrap');
-  const handle  = document.getElementById('baHandle');
-  const grip    = handle.querySelector('.ba-slider__grip');
+  function setupSlider(boxId, beforeId, handleId) {
+    const box    = document.getElementById(boxId);
+    if (!box) return;
+    const before = document.getElementById(beforeId);
+    const handle = document.getElementById(handleId);
+    const grip   = handle.querySelector('.ba-slider__grip');
 
-  let pos = 50; // initial percentage (50%)
-  let dragging = false;
+    let pos = 50;
+    let dragging = false;
 
-  function apply(p) {
-    pos = Math.max(0, Math.min(100, p));
-    // Antes is on top — clip from the right so dragging right reveals the after photo below
-    before.style.clipPath = `inset(0 ${100 - pos}% 0 0)`;
-    handle.style.left = pos + '%';
-    grip.setAttribute('aria-valuenow', String(Math.round(pos)));
-  }
+    // Touch direction detection
+    let touchStartX = 0, touchStartY = 0;
+    let touchDecided = false;  // true once we know the gesture is horizontal
+    let touchIsHorizontal = false;
+    const DIR_THRESHOLD = 8; // px before we decide
 
-  function pctFromEvent(clientX) {
-    const r = box.getBoundingClientRect();
-    return ((clientX - r.left) / r.width) * 100;
-  }
+    function apply(p) {
+      pos = Math.max(0, Math.min(100, p));
+      before.style.clipPath = `inset(0 ${100 - pos}% 0 0)`;
+      handle.style.left = pos + '%';
+      grip.setAttribute('aria-valuenow', String(Math.round(pos)));
+    }
 
-  function start(e) {
-    dragging = true;
-    box.classList.add('dragging');
-    move(e);
-  }
-  function move(e) {
-    if (!dragging) return;
-    const x = e.touches ? e.touches[0].clientX : e.clientX;
-    apply(pctFromEvent(x));
-    if (e.cancelable) e.preventDefault();
-  }
-  function end() {
-    dragging = false;
-    box.classList.remove('dragging');
-  }
+    function pctFromClientX(clientX) {
+      const r = box.getBoundingClientRect();
+      return ((clientX - r.left) / r.width) * 100;
+    }
 
-  // Click anywhere on the slider jumps to that position
-  box.addEventListener('mousedown', (e) => {
-    apply(pctFromEvent(e.clientX));
-    start(e);
-  });
-  window.addEventListener('mousemove', move);
-  window.addEventListener('mouseup',   end);
+    /* ---------- Mouse ---------- */
+    function onMouseDown(e) {
+      dragging = true;
+      box.classList.add('dragging');
+      apply(pctFromClientX(e.clientX));
+      e.preventDefault();
+    }
+    function onMouseMove(e) {
+      if (!dragging) return;
+      apply(pctFromClientX(e.clientX));
+    }
+    function onMouseUp() {
+      dragging = false;
+      box.classList.remove('dragging');
+    }
+    box.addEventListener('mousedown', onMouseDown);
+    window.addEventListener('mousemove', onMouseMove);
+    window.addEventListener('mouseup',   onMouseUp);
 
-  box.addEventListener('touchstart', (e) => {
-    apply(pctFromEvent(e.touches[0].clientX));
-    start(e);
-  }, { passive: false });
-  window.addEventListener('touchmove', move, { passive: false });
-  window.addEventListener('touchend', end);
+    /* ---------- Touch (direction-aware) ---------- */
+    box.addEventListener('touchstart', (e) => {
+      if (!e.touches.length) return;
+      touchStartX = e.touches[0].clientX;
+      touchStartY = e.touches[0].clientY;
+      touchDecided = false;
+      touchIsHorizontal = false;
+      // Do NOT preventDefault here — let vertical scroll begin natively
+    }, { passive: true });
 
-  // Keyboard a11y
-  grip.addEventListener('keydown', (e) => {
-    const step = e.shiftKey ? 10 : 2;
-    if (e.key === 'ArrowLeft')  { apply(pos - step); e.preventDefault(); }
-    if (e.key === 'ArrowRight') { apply(pos + step); e.preventDefault(); }
-    if (e.key === 'Home')       { apply(0);   e.preventDefault(); }
-    if (e.key === 'End')        { apply(100); e.preventDefault(); }
-  });
+    box.addEventListener('touchmove', (e) => {
+      if (!e.touches.length) return;
+      const t = e.touches[0];
+      const dx = t.clientX - touchStartX;
+      const dy = t.clientY - touchStartY;
 
-  // Idle nudge animation — entices the user to drag
-  let nudged = false;
-  const nudgeObs = new IntersectionObserver((entries) => {
-    entries.forEach(en => {
-      if (en.isIntersecting && !nudged) {
-        nudged = true;
-        setTimeout(() => {
-          let t = 0;
-          const start = performance.now();
-          const dur = 2200;
-          function loop(now) {
-            const k = Math.min(1, (now - start) / dur);
-            // ease back-and-forth
-            const e1 = 0.5 - 0.5 * Math.cos(k * Math.PI * 2);
-            const offset = (e1 - 0.5) * 24; // ±12%
-            apply(50 + offset);
-            if (k < 1 && !dragging) requestAnimationFrame(loop);
-            else if (!dragging) apply(50);
+      if (!touchDecided) {
+        if (Math.abs(dx) > DIR_THRESHOLD || Math.abs(dy) > DIR_THRESHOLD) {
+          touchDecided = true;
+          touchIsHorizontal = Math.abs(dx) > Math.abs(dy);
+          if (touchIsHorizontal) {
+            dragging = true;
+            box.classList.add('dragging');
+            apply(pctFromClientX(t.clientX));
           }
-          requestAnimationFrame(loop);
-        }, 600);
+        }
+      }
+
+      if (touchDecided && touchIsHorizontal) {
+        apply(pctFromClientX(t.clientX));
+        if (e.cancelable) e.preventDefault();
+      }
+      // If vertical: do nothing, native scroll continues.
+    }, { passive: false });
+
+    function onTouchEnd() {
+      dragging = false;
+      touchDecided = false;
+      touchIsHorizontal = false;
+      box.classList.remove('dragging');
+    }
+    box.addEventListener('touchend',    onTouchEnd);
+    box.addEventListener('touchcancel', onTouchEnd);
+
+    /* ---------- Keyboard a11y ---------- */
+    grip.addEventListener('keydown', (e) => {
+      const step = e.shiftKey ? 10 : 2;
+      if (e.key === 'ArrowLeft')  { apply(pos - step); e.preventDefault(); }
+      if (e.key === 'ArrowRight') { apply(pos + step); e.preventDefault(); }
+      if (e.key === 'Home')       { apply(0);   e.preventDefault(); }
+      if (e.key === 'End')        { apply(100); e.preventDefault(); }
+    });
+
+    /* ---------- Idle nudge ---------- */
+    let nudged = false;
+    const nudgeObs = new IntersectionObserver((entries) => {
+      entries.forEach(en => {
+        if (en.isIntersecting && !nudged) {
+          nudged = true;
+          setTimeout(() => {
+            const startT = performance.now();
+            const dur = 2200;
+            function loop(now) {
+              const k = Math.min(1, (now - startT) / dur);
+              const e1 = 0.5 - 0.5 * Math.cos(k * Math.PI * 2);
+              const offset = (e1 - 0.5) * 24; // ±12%
+              if (!dragging) apply(50 + offset);
+              if (k < 1 && !dragging) requestAnimationFrame(loop);
+              else if (!dragging) apply(50);
+            }
+            requestAnimationFrame(loop);
+          }, 600);
+        }
+      });
+    }, { threshold: 0.4 });
+    nudgeObs.observe(box);
+
+    apply(50);
+  }
+
+  setupSlider('baSliderBox',  'baBeforeWrap',  'baHandle');
+  setupSlider('baSliderBox2', 'baBeforeWrap2', 'baHandle2');
+  setupSlider('baSliderBox3', 'baBeforeWrap3', 'baHandle3');
+})();
+
+/* =========================================================
+   HERO VIDEO — fade out when hero leaves the viewport
+   (also pauses the <video> to save battery)
+   ========================================================= */
+(function(){
+  const hero = document.querySelector('.hero');
+  const wrap = document.querySelector('.hero__video');
+  if (!hero || !wrap) return;
+  const video = wrap.querySelector('video');
+
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach(en => {
+      const out = !en.isIntersecting;
+      wrap.classList.toggle('hidden', out);
+      if (video) {
+        if (out) { try { video.pause(); } catch(_){} }
+        else      { try { video.play();  } catch(_){} }
       }
     });
-  }, { threshold: 0.5 });
-  nudgeObs.observe(box);
-
-  apply(50);
+  }, { threshold: 0, rootMargin: '0px 0px -10% 0px' });
+  obs.observe(hero);
 })();
 
 /* =========================================================
