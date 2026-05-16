@@ -236,6 +236,11 @@
     z-index: 0;
     overflow: hidden;
     background: #050505;
+    transition: opacity 600ms ease;
+  }
+  .hero__video.hidden {
+    opacity: 0;
+    pointer-events: none;
   }
   .hero__video video {
     position: absolute;
@@ -245,6 +250,19 @@
     object-fit: cover;
     filter: saturate(1.05) contrast(1.05) brightness(1.05);
     transform: scale(1.04);
+  }
+  @media (max-width: 768px) {
+    .hero__video video {
+      filter: saturate(1.1) contrast(1.12) brightness(1.15);
+      object-position: center center;
+    }
+    /* Reduce the dark overlay on mobile so details are visible */
+    .hero__video::after {
+      background:
+        radial-gradient(95% 70% at 50% 50%, rgba(0,0,0,0.02) 0%, rgba(0,0,0,0.12) 60%, rgba(0,0,0,0.38) 100%),
+        linear-gradient(180deg, rgba(8,8,8,0.10) 0%, rgba(8,8,8,0.02) 40%, rgba(8,8,8,0.40) 100%);
+    }
+  }
     transition: transform 1200ms var(--ease);
   }
   .hero__video::after {
@@ -342,12 +360,21 @@
   }
   .hero__eyebrow { margin-bottom: 36px; }
   .hero__title {
-    font-size: clamp(38px, 6.2vw, 88px);
+    font-size: clamp(28px, 6.2vw, 88px);
     font-weight: 300;
     letter-spacing: -0.012em;
     max-width: 18ch;
     margin: 0 auto;
     text-wrap: balance;
+    word-break: break-word;
+    overflow-wrap: break-word;
+  }
+  @media (max-width: 480px) {
+    .hero__title {
+      font-size: clamp(24px, 8.5vw, 38px);
+      letter-spacing: -0.008em;
+      max-width: 100%;
+    }
   }
   .hero__title em {
     font-style: italic;
@@ -1652,9 +1679,7 @@
 <div class="cursor" id="cursor" aria-hidden="true"></div>
 <div class="cursor-trail" id="cursorTrail" aria-hidden="true"></div>
 
-<!-- Scroll progress -->
-<div class="scroll-progress" aria-hidden="true"><div class="scroll-progress__bar" id="scrollBar"></div></div>
-<div class="scroll-progress__label" aria-hidden="true"><span id="scrollPct">00</span> — Scroll</div>
+
 
 <!-- ====================== NAVBAR ====================== -->
 <nav class="nav" id="nav" role="navigation" aria-label="Principal">
@@ -1681,8 +1706,7 @@
     </div>
     <div class="hero__frame" aria-hidden="true"></div>
     <div class="hero__corners" aria-hidden="true"></div>
-    <div class="hero__meta" aria-hidden="true"><i></i> Rec · live studio</div>
-    <div class="hero__meta hero__meta--right" aria-hidden="true">40.4168° N · 36.5099° N</div>
+
 
     <div class="hero__inner">
       <div class="eyebrow hero__eyebrow reveal" style="--reveal-delay: 0ms;">
@@ -1801,11 +1825,11 @@
         <div class="ba-slider" id="baSliderBox">
           <!-- DESPÚES (behind) -->
           <div class="ba-slider__after-wrap">
-            <img class="ba-slider__img" src="assets/rino-despues.webp" alt="Resultado posterior — perfil nasal refinado" />
+            <img class="ba-slider__img" src="assets/rino-despues.webp" alt="Resultado posterior — perfil nasal refinado" loading="lazy" />
           </div>
           <!-- ANTES (in front, clipped from the right) -->
           <div class="ba-slider__before-wrap" id="baBeforeWrap">
-            <img class="ba-slider__img" src="assets/rino-antes.webp" alt="Antes de la rinomodelación" />
+            <img class="ba-slider__img" src="assets/rino-antes.webp" alt="Antes de la rinomodelación" loading="lazy" />
             <!-- Architectural measurement overlay drawn on the antes side -->
             <svg class="ba-slider__geom" viewBox="0 0 100 150" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
               <line x1="50" y1="10" x2="50" y2="140"/>
@@ -1844,18 +1868,34 @@
 
     <!-- 02 · DEEP PLANE FACELIFT — reversed -->
     <article class="procedure procedure--reverse reveal">
-      <div class="procedure__media has-photo">
-        <img class="procedure__media-img" src="assets/deep-plane.webp" alt="Deep Plane Facelift — mapeo vectorial facial" />
-        <svg class="geom-overlay" viewBox="0 0 100 150" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
-          <path d="M 30 60 Q 50 80 70 60"/>
-          <path d="M 28 80 Q 50 100 72 80"/>
-          <line x1="35" y1="55" x2="35" y2="95"/>
-          <line x1="65" y1="55" x2="65" y2="95"/>
-          <circle cx="50" cy="75" r="22"/>
-        </svg>
+      <div class="procedure__media has-photo" id="baSlider2">
         <span class="procedure__media-tag">PROC · 02</span>
         <span class="procedure__index">ii.</span>
-        <div class="procedure__media-label"><span>SMAS profundo — tracción vectorial</span></div>
+
+        <div class="ba-slider" id="baSliderBox2">
+          <!-- DESPUÉS (behind) -->
+          <div class="ba-slider__after-wrap">
+            <img class="ba-slider__img" src="assets/deep-plane-despues.webp" alt="Resultado Deep Plane Facelift" loading="lazy" />
+          </div>
+          <!-- ANTES (in front, clipped) -->
+          <div class="ba-slider__before-wrap" id="baBeforeWrap2">
+            <img class="ba-slider__img" src="assets/deep-plane-antes.webp" alt="Antes del Deep Plane Facelift" loading="lazy" />
+            <svg class="ba-slider__geom" viewBox="0 0 100 150" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+              <path d="M 30 60 Q 50 80 70 60"/>
+              <path d="M 28 80 Q 50 100 72 80"/>
+              <line x1="35" y1="55" x2="35" y2="95"/>
+              <line x1="65" y1="55" x2="65" y2="95"/>
+              <circle cx="50" cy="75" r="22"/>
+            </svg>
+          </div>
+
+          <span class="ba-slider__tag ba-slider__tag--before">Antes</span>
+          <span class="ba-slider__tag ba-slider__tag--after">Después</span>
+
+          <div class="ba-slider__handle" id="baHandle2">
+            <div class="ba-slider__grip" aria-label="Arrastrar para comparar" role="slider" tabindex="0" aria-valuemin="0" aria-valuemax="100" aria-valuenow="50"></div>
+          </div>
+        </div>
       </div>
       <div class="procedure__copy">
         <span class="procedure__tag">Técnica Avanzada</span>
@@ -1874,21 +1914,37 @@
 
     <!-- 03 · ESCULPIDO CORPORAL HD -->
     <article class="procedure reveal">
-      <div class="procedure__media has-photo">
-        <img class="procedure__media-img" src="assets/esculpido-hd.webp" alt="Esculpido Corporal HD — definición atlética tridimensional" />
-        <svg class="geom-overlay" viewBox="0 0 100 150" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
-          <line x1="30" y1="30" x2="30" y2="130"/>
-          <line x1="70" y1="30" x2="70" y2="130"/>
-          <line x1="25" y1="60" x2="75" y2="60"/>
-          <line x1="25" y1="90" x2="75" y2="90"/>
-          <line x1="25" y1="120" x2="75" y2="120"/>
-          <circle cx="50" cy="60" r="2"/>
-          <circle cx="50" cy="90" r="2"/>
-          <circle cx="50" cy="120" r="2"/>
-        </svg>
+      <div class="procedure__media has-photo" id="baSlider3">
         <span class="procedure__media-tag">PROC · 03</span>
         <span class="procedure__index">iii.</span>
-        <div class="procedure__media-label"><span>Mapeo muscular — ultrasonido HD</span></div>
+
+        <div class="ba-slider" id="baSliderBox3">
+          <!-- DESPUÉS (behind) -->
+          <div class="ba-slider__after-wrap">
+            <img class="ba-slider__img" src="assets/esculpido-despues.webp" alt="Resultado Esculpido Corporal HD" loading="lazy" />
+          </div>
+          <!-- ANTES (in front, clipped) -->
+          <div class="ba-slider__before-wrap" id="baBeforeWrap3">
+            <img class="ba-slider__img" src="assets/esculpido-antes.webp" alt="Antes del Esculpido Corporal HD" loading="lazy" />
+            <svg class="ba-slider__geom" viewBox="0 0 100 150" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+              <line x1="30" y1="30" x2="30" y2="130"/>
+              <line x1="70" y1="30" x2="70" y2="130"/>
+              <line x1="25" y1="60" x2="75" y2="60"/>
+              <line x1="25" y1="90" x2="75" y2="90"/>
+              <line x1="25" y1="120" x2="75" y2="120"/>
+              <circle cx="50" cy="60" r="2"/>
+              <circle cx="50" cy="90" r="2"/>
+              <circle cx="50" cy="120" r="2"/>
+            </svg>
+          </div>
+
+          <span class="ba-slider__tag ba-slider__tag--before">Antes</span>
+          <span class="ba-slider__tag ba-slider__tag--after">Después</span>
+
+          <div class="ba-slider__handle" id="baHandle3">
+            <div class="ba-slider__grip" aria-label="Arrastrar para comparar" role="slider" tabindex="0" aria-valuemin="0" aria-valuemax="100" aria-valuenow="50"></div>
+          </div>
+        </div>
       </div>
       <div class="procedure__copy">
         <span class="procedure__tag">Tecnología Médica</span>
@@ -2376,20 +2432,136 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
 })();
 
 /* =========================================================
-   SCROLL PROGRESS
+   SCROLL PROGRESS — removed
+   ========================================================= */
+
+/* =========================================================
+   BEFORE / AFTER SLIDER — Deep Plane Facelift
    ========================================================= */
 (function(){
-  const bar = document.getElementById('scrollBar');
-  const pct = document.getElementById('scrollPct');
-  function update() {
-    const h = document.documentElement.scrollHeight - window.innerHeight;
-    const p = h > 0 ? (window.scrollY / h) * 100 : 0;
-    bar.style.height = p + '%';
-    pct.textContent = String(Math.floor(p)).padStart(2, '0');
+  const box    = document.getElementById('baSliderBox2');
+  if (!box) return;
+  const before = document.getElementById('baBeforeWrap2');
+  const handle = document.getElementById('baHandle2');
+  const grip   = handle.querySelector('.ba-slider__grip');
+  let pos = 50, dragging = false;
+  function apply(p) {
+    pos = Math.max(0, Math.min(100, p));
+    before.style.clipPath = `inset(0 ${100 - pos}% 0 0)`;
+    handle.style.left = pos + '%';
+    grip.setAttribute('aria-valuenow', String(Math.round(pos)));
   }
-  window.addEventListener('scroll', update, { passive: true });
-  window.addEventListener('resize', update);
-  update();
+  function pctFromEvent(clientX) {
+    const r = box.getBoundingClientRect();
+    return ((clientX - r.left) / r.width) * 100;
+  }
+  function start(e) { dragging = true; box.classList.add('dragging'); move(e); }
+  function move(e)  { if (!dragging) return; const x = e.touches ? e.touches[0].clientX : e.clientX; apply(pctFromEvent(x)); if (e.cancelable) e.preventDefault(); }
+  function end()    { dragging = false; box.classList.remove('dragging'); }
+  box.addEventListener('mousedown', (e) => { apply(pctFromEvent(e.clientX)); start(e); });
+  window.addEventListener('mousemove', move);
+  window.addEventListener('mouseup', end);
+  box.addEventListener('touchstart', (e) => { apply(pctFromEvent(e.touches[0].clientX)); start(e); }, { passive: false });
+  window.addEventListener('touchmove', move, { passive: false });
+  window.addEventListener('touchend', end);
+  grip.addEventListener('keydown', (e) => {
+    const step = e.shiftKey ? 10 : 2;
+    if (e.key === 'ArrowLeft')  { apply(pos - step); e.preventDefault(); }
+    if (e.key === 'ArrowRight') { apply(pos + step); e.preventDefault(); }
+  });
+  let nudged = false;
+  const nudgeObs = new IntersectionObserver((entries) => {
+    entries.forEach(en => {
+      if (en.isIntersecting && !nudged) {
+        nudged = true;
+        setTimeout(() => {
+          const start2 = performance.now(), dur = 2200;
+          function loop(now) {
+            const k = Math.min(1, (now - start2) / dur);
+            const e1 = 0.5 - 0.5 * Math.cos(k * Math.PI * 2);
+            apply(50 + (e1 - 0.5) * 24);
+            if (k < 1 && !dragging) requestAnimationFrame(loop);
+            else if (!dragging) apply(50);
+          }
+          requestAnimationFrame(loop);
+        }, 600);
+      }
+    });
+  }, { threshold: 0.5 });
+  nudgeObs.observe(box);
+  apply(50);
+})();
+
+/* =========================================================
+   BEFORE / AFTER SLIDER — Esculpido Corporal HD
+   ========================================================= */
+(function(){
+  const box    = document.getElementById('baSliderBox3');
+  if (!box) return;
+  const before = document.getElementById('baBeforeWrap3');
+  const handle = document.getElementById('baHandle3');
+  const grip   = handle.querySelector('.ba-slider__grip');
+  let pos = 50, dragging = false;
+  function apply(p) {
+    pos = Math.max(0, Math.min(100, p));
+    before.style.clipPath = `inset(0 ${100 - pos}% 0 0)`;
+    handle.style.left = pos + '%';
+    grip.setAttribute('aria-valuenow', String(Math.round(pos)));
+  }
+  function pctFromEvent(clientX) {
+    const r = box.getBoundingClientRect();
+    return ((clientX - r.left) / r.width) * 100;
+  }
+  function start(e) { dragging = true; box.classList.add('dragging'); move(e); }
+  function move(e)  { if (!dragging) return; const x = e.touches ? e.touches[0].clientX : e.clientX; apply(pctFromEvent(x)); if (e.cancelable) e.preventDefault(); }
+  function end()    { dragging = false; box.classList.remove('dragging'); }
+  box.addEventListener('mousedown', (e) => { apply(pctFromEvent(e.clientX)); start(e); });
+  window.addEventListener('mousemove', move);
+  window.addEventListener('mouseup', end);
+  box.addEventListener('touchstart', (e) => { apply(pctFromEvent(e.touches[0].clientX)); start(e); }, { passive: false });
+  window.addEventListener('touchmove', move, { passive: false });
+  window.addEventListener('touchend', end);
+  grip.addEventListener('keydown', (e) => {
+    const step = e.shiftKey ? 10 : 2;
+    if (e.key === 'ArrowLeft')  { apply(pos - step); e.preventDefault(); }
+    if (e.key === 'ArrowRight') { apply(pos + step); e.preventDefault(); }
+  });
+  let nudged = false;
+  const nudgeObs = new IntersectionObserver((entries) => {
+    entries.forEach(en => {
+      if (en.isIntersecting && !nudged) {
+        nudged = true;
+        setTimeout(() => {
+          const start2 = performance.now(), dur = 2200;
+          function loop(now) {
+            const k = Math.min(1, (now - start2) / dur);
+            const e1 = 0.5 - 0.5 * Math.cos(k * Math.PI * 2);
+            apply(50 + (e1 - 0.5) * 24);
+            if (k < 1 && !dragging) requestAnimationFrame(loop);
+            else if (!dragging) apply(50);
+          }
+          requestAnimationFrame(loop);
+        }, 600);
+      }
+    });
+  }, { threshold: 0.5 });
+  nudgeObs.observe(box);
+  apply(50);
+})();
+(function(){
+  const heroVideo = document.querySelector('.hero__video');
+  const hero = document.querySelector('.hero');
+  if (!heroVideo || !hero) return;
+  function checkHeroVideo() {
+    const heroBottom = hero.getBoundingClientRect().bottom;
+    if (heroBottom < 0) {
+      heroVideo.classList.add('hidden');
+    } else {
+      heroVideo.classList.remove('hidden');
+    }
+  }
+  window.addEventListener('scroll', checkHeroVideo, { passive: true });
+  checkHeroVideo();
 })();
 
 /* =========================================================
